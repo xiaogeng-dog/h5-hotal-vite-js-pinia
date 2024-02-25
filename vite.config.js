@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'url'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
+import AutoImport from 'unplugin-auto-import/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
@@ -25,6 +26,22 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
+      AutoImport({
+        // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
+        imports: ['vue'],
+        // 生成自动导入的TS声明文件
+        // dts: './auto-imports.d.ts',
+        // resolvers: [
+        //   ElementPlusResolver(),
+        //   // 自动导入图标组件
+        //   IconsResolver({
+        //     prefix: 'Icon'
+        //   })
+        // ],
+        eslintrc: {
+          enabled: false // 1、改为true用于生成eslint配置。2、生成后改回false，避免重复生成消耗
+        }
+      }),
       Components({
         resolvers: [VantResolver()]
       })
