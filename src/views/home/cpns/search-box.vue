@@ -31,6 +31,7 @@
       color="#ff9854"
       :round="false"
       :show-confirm="false"
+      :formatter="calendarFormatter"
       @confirm="onConfirm"
     />
     <!-- 价格/人数选择 -->
@@ -100,6 +101,16 @@ const positionClick = () => {
       maximumAge: 0
     }
   )
+}
+
+const calendarFormatter = (day) => {
+  if (day.type === 'start') {
+    day.bottomInfo = '入住'
+  } else if (day.type === 'end') {
+    day.bottomInfo = '离店'
+  }
+
+  return day
 }
 
 const onConfirm = (value) => {
