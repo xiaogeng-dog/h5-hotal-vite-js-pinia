@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.28.0",
+    "dayjs": "^1.11.10",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.7",
     "vant": "^4.8.4",

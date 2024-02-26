@@ -4,31 +4,43 @@
       <div class="city" @click="cityItemClick">
         {{ cityStore.currentCity.cityName }}
       </div>
-      <div class="current">
+      <div class="current" @click="positionClick">
         <span class="mine">我的位置</span>
         <img src="@/assets/img/home/icon_location.png" alt="" />
       </div>
     </div>
-    <div class="item date-range bottom-gray-line">
+    <div class="item date-range bottom-gray-line" @click="showCalendar = true">
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
-          <span class="time"> 8月25日 </span>
+          <span class="time"> {{ startDateStr }} </span>
         </div>
-        <div class="stay">共一晚</div>
+        <div class="stay">共{{ stayCount }}晚</div>
       </div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
-          <span class="time"> 8月26日 </span>
+          <span class="time"> {{ endDateStr }} </span>
         </div>
       </div>
     </div>
+
+    <van-calendar
+      v-model:show="showCalendar"
+      type="range"
+      color="#ff9854"
+      :round="false"
+      :show-confirm="false"
+      @confirm="onConfirm"
+    />
+    <!-- 价格/人数选择 -->
     <div class="item price-counter bottom-gray-line">
       <div class="start">价格不限</div>
       <div class="end">人数不限</div>
     </div>
+    <!-- 关键字 -->
     <div class="item keyword bottom-gray-line">关键字/位置/民宿名</div>
+    <!-- 热门建议 -->
     <div class="item hot-suggest">
       <template v-for="(item, index) in hotSuggests" :key="index">
         <span class="tag">{{ item.tagText.text }}</span>
@@ -42,30 +54,78 @@
 </template>
 
 <script setup>
-import useCityStore from '@/store/modules/city'
+import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-defineProps({
-  hotSuggests: {
-    type: Object,
-    default: () => {}
-  }
-})
+import useCityStore from '@/store/modules/city'
+import useMainStore from '@/store/modules/main'
+import useHomeStore from '@/store/modules/home'
+
+import { formatMonthDay, getDiffDays } from '@/utils/format_date'
+
 const router = useRouter()
+
+const cityStore = useCityStore()
+const { currentCity } = storeToRefs(cityStore)
+// 日期范围的处理
+const mainStore = useMainStore()
+const { startDate, endDate } = storeToRefs(mainStore)
+
+const startDateStr = computed(() => formatMonthDay(startDate.value))
+const endDateStr = computed(() => formatMonthDay(endDate.value))
+const stayCount = ref(getDiffDays(startDate.value, endDate.value))
+
+const showCalendar = ref(false)
+
+// 热门建议
+const homeStore = useHomeStore()
+const { hotSuggests } = storeToRefs(homeStore)
+
+const cityItemClick = () => {
+  router.push({
+    path: '/city'
+  })
+}
+const positionClick = () => {
+  navigator.geolocation.getCurrentPosition(
+    (res) => {
+      console.log('获取位置成功:', res)
+    },
+    (err) => {
+      console.log('获取位置失败:', err)
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    }
+  )
+}
+
+const onConfirm = (value) => {
+  // 1.设置日期
+  const selectStartDate = value[0]
+  const selectEndDate = value[1]
+  console.log(value)
+  mainStore.startDate = selectStartDate
+  mainStore.endDate = selectEndDate
+  stayCount.value = getDiffDays(selectStartDate, selectEndDate)
+
+  // 2.隐藏日历
+  showCalendar.value = false
+}
+
+// 开始搜索
+
 const startSearch = () => {
   router.push({
     path: '/search',
     query: {
-      address: '广州',
+      address: currentCity.value.cityName,
       cityId: 45,
-      startDate: '07-23',
-      endDate: '07-24'
+      startDate: formatMonthDay(startDate.value),
+      endDate: formatMonthDay(endDate.value)
     }
-  })
-}
-const cityStore = useCityStore()
-const cityItemClick = () => {
-  router.push({
-    path: '/city'
   })
 }
 </script>

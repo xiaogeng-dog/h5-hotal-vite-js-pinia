@@ -69,6 +69,7 @@ const searchConditions = ref([])
 const guessulike = ref([])
 
 const routeQuery = ref(route.query)
+console.log(1111, routeQuery.value)
 const showCancelIcon = ref(false)
 const keyWord = ref(PLACEHOLDER)
 

@@ -4,7 +4,7 @@
       <van-index-anchor index="热门" />
       <div class="hot">
         <template v-for="(item, index) in cityData.hotCities" :key="index">
-          <div class="item">{{ item.cityName }}</div>
+          <div class="item" @click="selectIten(item)">{{ item.cityName }}</div>
         </template>
       </div>
       <template v-for="item in cityData.cities" :key="item">

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useLoadingStore } from '@/store/modules/loading'
 import { baseURL, TIMEOUT } from './config'
 const loadingStore = useLoadingStore()
-class HYRequest {
+class Request {
   constructor(baseURL) {
     this.instance = axios.create({
       baseURL,
@@ -37,4 +37,4 @@ class HYRequest {
   }
 }
 
-export default new HYRequest(baseURL)
+export default new Request(baseURL)

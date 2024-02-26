@@ -4,7 +4,7 @@
     <div class="banner">
       <img src="@/assets/img/home/banner.webp" alt="" />
     </div>
-    <search-box :hot-suggests="hotSuggests" />
+    <search-box />
     <div class="content">
       <category-list :categories="categories" />
       <house-area :houselist="houselist" />
@@ -30,17 +30,15 @@ import useReachBottom from '@/hooks/useReachBottom'
 import SearchBox from './cpns/search-box.vue'
 import CategoryList from './cpns/category-list.vue'
 import HouseArea from './cpns/house-area.vue'
-import {
-  getHomeHotSuggests,
-  getHomeCategories,
-  getHomeHouselist
-} from '@/service'
+import { getHomeCategories, getHomeHouseList } from '@/service'
+
+import useHomeStore from '@/store/modules/home'
 import useScroll from '@/hooks/useScroll'
 const router = useRouter()
-const hotSuggests = ref([])
-getHomeHotSuggests().then((res) => {
-  hotSuggests.value = res.data
-})
+
+// 发送网络请求
+const homeStore = useHomeStore()
+homeStore.fetchHotSuggestData()
 
 const categories = ref([])
 getHomeCategories().then((res) => {
@@ -70,7 +68,7 @@ const handleSearchClick = () => {
   })
 }
 function fetchHouseListData() {
-  getHomeHouselist(currentPage).then((res) => {
+  getHomeHouseList(currentPage).then((res) => {
     houselist.value.push(...res.data)
     currentPage++
   })

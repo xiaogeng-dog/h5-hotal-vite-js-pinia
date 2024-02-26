@@ -23,6 +23,7 @@ watch(
   () => route.path,
   () => {
     // 是否隐藏底部的 tabbar
+    console.log(route.meta)
     hideTabBar.value = !!route.meta.hideTabBar
   }
 )

@@ -1,4 +1,4 @@
-import hyRequest from '../request'
+import request from '../request'
 
 /**
 数据弄好了：
@@ -17,12 +17,12 @@ http://123.207.32.32:1888/api/search/result
 
  */
 export function getFavorList() {
-  return hyRequest.get({
+  return request.get({
     url: '/favor/list'
   })
 }
 export function getHistoryList() {
-  return hyRequest.get({
+  return request.get({
     url: '/favor/history'
   })
 }
