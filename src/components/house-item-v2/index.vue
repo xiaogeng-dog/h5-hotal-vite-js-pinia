@@ -8,7 +8,14 @@
         <div class="summary">{{ itemData.summaryText }}</div>
         <div class="name">{{ itemData.houseName }}</div>
         <div class="price">
-          <van-rate :model-value="5" size="12" gutter="0" color="#fff" />
+          <van-rate
+            :model-value="itemScore"
+            readonly
+            allow-half
+            size="12"
+            gutter="0"
+            color="#fff"
+          />
           <span class="new">{{ '¥' + itemData.finalPrice }}</span>
         </div>
       </div>
@@ -17,11 +24,16 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+const props = defineProps({
   itemData: {
     type: Object,
     default: () => ({})
   }
+})
+
+const itemScore = computed(() => {
+  return Number(props.itemData.commentScore)
 })
 </script>
 

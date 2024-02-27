@@ -22,15 +22,13 @@
 import { useRouter } from 'vue-router'
 import HouseItemV1 from '@/components/house-item-v1/index.vue'
 import HouseItemV2 from '@/components/house-item-v2/index.vue'
+import useHomeStore from '@/store/modules/home'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 
-defineProps({
-  houselist: {
-    type: Array,
-    default: () => []
-  }
-})
+const homeStore = useHomeStore()
+const { houselist } = storeToRefs(homeStore)
 
 // 监听点击
 function itemClick(houseId) {

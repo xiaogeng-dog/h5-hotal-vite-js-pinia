@@ -202,8 +202,9 @@ const startSearch = () => {
 }
 
 .search-btn {
+  // justify-content: center;
   .btn {
-    width: 342px;
+    width: 100%;
     height: 38px;
     max-height: 50px;
     font-weight: 500;

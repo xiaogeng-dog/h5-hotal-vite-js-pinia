@@ -6,7 +6,7 @@
     </div>
     <search-box />
     <div class="content">
-      <category-list :categories="categories" />
+      <category-list />
       <house-area :houselist="houselist" />
     </div>
   </div>
@@ -30,7 +30,6 @@ import useReachBottom from '@/hooks/useReachBottom'
 import SearchBox from './cpns/search-box.vue'
 import CategoryList from './cpns/category-list.vue'
 import HouseArea from './cpns/house-area.vue'
-import { getHomeCategories, getHomeHouseList } from '@/service'
 
 import useHomeStore from '@/store/modules/home'
 import useScroll from '@/hooks/useScroll'
@@ -39,15 +38,8 @@ const router = useRouter()
 // 发送网络请求
 const homeStore = useHomeStore()
 homeStore.fetchHotSuggestData()
-
-const categories = ref([])
-getHomeCategories().then((res) => {
-  categories.value = res.data
-})
-
-let currentPage = 1
-const houselist = ref([])
-fetchHouseListData()
+homeStore.fetchCategoriesData()
+homeStore.fetchHouselistData()
 
 // 监听点击
 // function itemClick(houseId) {
@@ -67,17 +59,11 @@ const handleSearchClick = () => {
     }
   })
 }
-function fetchHouseListData() {
-  getHomeHouseList(currentPage).then((res) => {
-    houselist.value.push(...res.data)
-    currentPage++
-  })
-}
 
 // 监听达到底部
 const pageEl = ref()
 useReachBottom(() => {
-  fetchHouseListData()
+  homeStore.fetchHouselistData()
 })
 
 // 监听页面的滚动

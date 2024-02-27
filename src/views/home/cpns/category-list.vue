@@ -12,12 +12,11 @@
 </template>
 
 <script setup>
-defineProps({
-  categories: {
-    type: Array,
-    default: () => []
-  }
-})
+import useHomeStore from '@/store/modules/home'
+import { storeToRefs } from 'pinia'
+
+const homeStore = useHomeStore()
+const { categories } = storeToRefs(homeStore)
 
 // const active = ref()
 </script>
