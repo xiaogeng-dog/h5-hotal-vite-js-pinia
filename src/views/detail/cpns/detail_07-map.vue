@@ -21,12 +21,19 @@ const baiduRef = ref()
 const map = ref()
 
 function initMap() {
-  map.value = new BMap.Map(baiduRef.value)
-  let point = new BMap.Point(props.position.longitude, props.position.latitude)
+  try {
+    map.value = new BMapGL.Map(baiduRef.value)
+    let point = new BMapGL.Point(
+      props.position.longitude,
+      props.position.latitude
+    )
 
-  map.value.centerAndZoom(point, 20)
-  const marker = new BMap.Marker(point)
-  map.value.addOverlay(marker)
+    map.value.centerAndZoom(point, 20)
+    const marker = new BMapGL.Marker(point)
+    map.value.addOverlay(marker)
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 onMounted(() => {

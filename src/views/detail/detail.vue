@@ -1,6 +1,11 @@
 <template>
   <div class="detail" ref="detailRef">
-    <van-nav-bar title="房屋详情" left-arrow left-text="旅途" />
+    <van-nav-bar
+      title="房屋详情"
+      left-arrow
+      left-text="旅途"
+      @click-left="backClick"
+    />
     <div class="tabs">
       <tab-control
         v-if="showTabs"
@@ -59,13 +64,15 @@ import DetailMap from './cpns/detail_07-map.vue'
 import DetailIntro from './cpns/detail_08-intro.vue'
 import DetailActionBar from './cpns/detail-action-bar.vue'
 import TabControl from '@/components/tab-control/tab-control.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
 import { getDetailInfos } from '@/service/modules/detail'
 import { ref } from 'vue'
 import useScroll from '@/hooks/useScroll'
 import { computed } from 'vue'
 
 const route = useRoute()
+const router = useRouter()
 const houseId = route.params.id
 
 const infos = ref({})
@@ -76,6 +83,7 @@ getDetailInfos(houseId).then((res) => {
 const detailRef = ref()
 const { scrollTop } = useScroll(detailRef)
 const showTabs = computed(() => {
+  console.log(scrollTop.value)
   return scrollTop.value >= 300
 })
 
@@ -86,9 +94,13 @@ const getContentRef = (el) => {
 const tabItemClick = (index) => {
   console.log('index:', index, contentEls)
   detailRef.value.scrollTo({
-    top: contentEls[index].offsetTop - 40,
+    top: contentEls[index].offsetTop - 44,
     behavior: 'smooth'
   })
+}
+
+function backClick() {
+  router.back()
 }
 </script>
 

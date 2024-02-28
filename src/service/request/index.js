@@ -8,10 +8,30 @@ class Request {
       baseURL,
       timeout: TIMEOUT
     })
+
+    this.instance.interceptors.request.use(
+      (config) => {
+        loadingStore.changeLoading(true)
+        return config
+      },
+      (err) => {
+        return err
+      }
+    )
+    this.instance.interceptors.response.use(
+      (res) => {
+        loadingStore.changeLoading(false)
+        return res
+      },
+      (err) => {
+        loadingStore.changeLoading(false)
+        return err
+      }
+    )
   }
 
   request(config) {
-    loadingStore.changeLoading(true)
+    // loadingStore.changeLoading(true)
     return new Promise((resolve, reject) => {
       this.instance
         .request(config)
@@ -23,7 +43,7 @@ class Request {
           reject(err)
         })
         .finally(() => {
-          loadingStore.changeLoading(false)
+          // loadingStore.changeLoading(false)
         })
     })
   }

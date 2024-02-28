@@ -1,5 +1,9 @@
 <template>
-  <div v-if="loadingStore.isLoading" class="global-loading">
+  <div
+    @click="loadingClick"
+    v-if="loadingStore.isLoading"
+    class="global-loading"
+  >
     <div class="loading-bg"></div>
     <div class="loading"></div>
   </div>
@@ -11,6 +15,10 @@
 
 import { useLoadingStore } from '@/store/modules/loading.js'
 const loadingStore = useLoadingStore()
+
+const loadingClick = () => {
+  loadingStore.changeLoading(false)
+}
 </script>
 
 <style scoped lang="less">

@@ -53,7 +53,7 @@ import DetailSection from '@/components/detail-section/detail-section.vue'
 defineProps({
   landlord: {
     type: Object,
-    default: () => ({})
+    default: () => {}
   }
 })
 </script>

@@ -36,8 +36,8 @@ import { computed } from 'vue'
 
 const props = defineProps({
   swiperData: {
-    type: Object,
-    default: () => {}
+    type: Array,
+    default: () => []
   }
 })
 

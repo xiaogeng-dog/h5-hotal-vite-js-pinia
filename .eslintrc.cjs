@@ -19,6 +19,6 @@ module.exports = {
   },
   globals: {
     process: true,
-    BMap: true
+    BMapGL: true
   }
 }

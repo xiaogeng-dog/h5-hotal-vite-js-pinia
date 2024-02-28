@@ -7,13 +7,13 @@
     <search-box />
     <div class="content">
       <category-list />
-      <house-area :houselist="houselist" />
+      <house-area />
     </div>
   </div>
   <div v-show="showSearchBar" class="home-top">
     <search-bar
-      start-date="07.25"
-      end-date="07.26"
+      :start-date="formatMonthDay(startDate)"
+      :end-date="formatMonthDay(endDate)"
       height="45px"
       key-word-font-size="14px"
       :search-icon="true"
@@ -25,12 +25,16 @@
 
 <script setup>
 import { ref, computed, onActivated, onDeactivated } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { formatMonthDay } from '@/utils/format_date'
 import useReachBottom from '@/hooks/useReachBottom'
 import SearchBox from './cpns/search-box.vue'
 import CategoryList from './cpns/category-list.vue'
 import HouseArea from './cpns/house-area.vue'
 
+import useCityStore from '@/store/modules/city'
+import useMainStore from '@/store/modules/main'
 import useHomeStore from '@/store/modules/home'
 import useScroll from '@/hooks/useScroll'
 const router = useRouter()
@@ -40,6 +44,12 @@ const homeStore = useHomeStore()
 homeStore.fetchHotSuggestData()
 homeStore.fetchCategoriesData()
 homeStore.fetchHouselistData()
+
+const cityStore = useCityStore()
+const { currentCity } = storeToRefs(cityStore)
+// 日期范围的处理
+const mainStore = useMainStore()
+const { startDate, endDate } = storeToRefs(mainStore)
 
 // 监听点击
 // function itemClick(houseId) {
@@ -52,10 +62,10 @@ const handleSearchClick = () => {
   router.push({
     path: '/search',
     query: {
-      address: '广州',
+      address: currentCity.value.cityName,
       cityId: 45,
-      startDate: '07-25',
-      endDate: '07-26'
+      startDate: formatMonthDay(startDate.value),
+      endDate: formatMonthDay(endDate.value)
     }
   })
 }
