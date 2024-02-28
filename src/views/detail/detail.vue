@@ -174,6 +174,7 @@ function backClick() {
   position: relative;
   z-index: 9;
   height: 100vh;
+  box-sizing: border-box;
   padding-bottom: 60px;
   background-color: #fff;
   overflow-y: auto;
