@@ -3,13 +3,16 @@
     <van-nav-bar
       title="房屋详情"
       left-arrow
+      placeholder
       left-text="旅途"
+      :safe-area-inset-top="false"
       @click-left="backClick"
     />
     <div class="tabs">
       <tab-control
+        ref="tabControlRef"
         v-if="showTabs"
-        :titles="['描述', '设施', '房东', '评论', '须知', '周边']"
+        :titles="names"
         @item-click="tabItemClick"
       />
     </div>
@@ -18,28 +21,34 @@
         :swiper-data="infos.mainPart.topModule.housePicture.housePics"
       />
       <detail-infos
+        name="描述"
         :ref="getContentRef"
         :top-module="infos.mainPart.topModule"
       />
       <detail-facility
+        name="设施"
         :ref="getContentRef"
         :house-facility="
           infos.mainPart.dynamicModule.facilityModule.houseFacility
         "
       />
       <detail-landloard
+        name="房东"
         :ref="getContentRef"
         :landlord="infos.mainPart.dynamicModule.landlordModule"
       />
       <detail-comment
+        name="评论"
         :ref="getContentRef"
         :comment="infos.mainPart.dynamicModule.commentModule"
       />
       <detail-notice
+        name="须知"
         :ref="getContentRef"
         :order-rules="infos.mainPart.dynamicModule.rulesModule.orderRules"
       />
       <detail-map
+        name="周边"
         :ref="getContentRef"
         :position="infos.mainPart.dynamicModule.positionModule"
       />
@@ -54,6 +63,7 @@
 </template>
 
 <script setup name="detail">
+import { ref, watch, computed, onMounted } from 'vue'
 import DetailSwiper from './cpns/detail_01-swiper.vue'
 import DetailInfos from './cpns/detail_02-infos.vue'
 import DetailFacility from './cpns/detail_03-facility.vue'
@@ -67,9 +77,7 @@ import TabControl from '@/components/tab-control/tab-control.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { getDetailInfos } from '@/service/modules/detail'
-import { ref } from 'vue'
 import useScroll from '@/hooks/useScroll'
-import { computed } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -80,6 +88,10 @@ getDetailInfos(houseId).then((res) => {
   infos.value = res.data
 })
 
+onMounted(() => {
+  console.dir(document.documentElement)
+})
+
 const detailRef = ref()
 const { scrollTop } = useScroll(detailRef)
 const showTabs = computed(() => {
@@ -87,17 +99,70 @@ const showTabs = computed(() => {
   return scrollTop.value >= 300
 })
 
-const contentEls = []
+// 方法一
+// const contentEls = []
+// const getContentRef = (el) => {
+//   if (el) contentEls.push(el.$el)
+// }
+
+// const tabItemClick = (index) => {
+//   console.log('index:', index, contentEls)
+//   detailRef.value.scrollTo({
+//     top: contentEls[index].offsetTop - 44,
+//     behavior: 'smooth'
+//   })
+// }
+//方法二
+const contentEls = ref({})
+const names = computed(() => {
+  return Object.keys(contentEls.value)
+})
 const getContentRef = (el) => {
-  if (el) contentEls.push(el.$el)
+  if (!el) return
+  const name = el.$el.getAttribute('name')
+  contentEls.value[name] = el.$el
 }
+
+let isClick = false
+let currentDistance = -1
 const tabItemClick = (index) => {
-  console.log('index:', index, contentEls)
+  const key = Object.keys(contentEls.value)[index]
+  const el = contentEls.value[key]
+  let distance = el.offsetTop
+  if (index !== 0) {
+    distance = distance - 44
+  }
+  isClick = true
+  currentDistance = distance
   detailRef.value.scrollTo({
-    top: contentEls[index].offsetTop - 44,
+    top: distance,
     behavior: 'smooth'
   })
 }
+
+// 页面滚动, 滚动时匹配对应的tabControll的index
+const tabControlRef = ref()
+watch(scrollTop, (newValue) => {
+  if (newValue === currentDistance) {
+    isClick = false
+  }
+  if (isClick) return
+
+  // 1.获取所有的区域的offsetTops
+  const els = Object.values(contentEls.value)
+  const values = els.map((el) => el.offsetTop)
+
+  // 2.根据newValue去匹配想要索引
+  let index = values.length - 1
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] > newValue + 44) {
+      index = i - 1
+      break
+    }
+  }
+  // console.log(index)
+  tabControlRef.value?.setCurrentIndex(index)
+})
 
 function backClick() {
   router.back()

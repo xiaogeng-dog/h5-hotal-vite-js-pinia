@@ -15,7 +15,7 @@
 </template>
 
 <script setup name="tab-control">
-import { ref } from 'vue'
+import { ref, defineExpose } from 'vue'
 
 defineProps({
   titles: {
@@ -31,6 +31,13 @@ const itemClick = (index) => {
   currentIndex.value = index
   emit('itemClick', index)
 }
+
+const setCurrentIndex = (index) => {
+  currentIndex.value = index
+}
+defineExpose({
+  setCurrentIndex
+})
 </script>
 
 <style lang="less" scoped>
