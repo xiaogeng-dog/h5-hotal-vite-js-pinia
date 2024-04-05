@@ -95,7 +95,6 @@ onMounted(() => {
 const detailRef = ref()
 const { scrollTop } = useScroll(detailRef)
 const showTabs = computed(() => {
-  console.log(scrollTop.value)
   return scrollTop.value >= 300
 })
 

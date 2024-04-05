@@ -78,10 +78,11 @@ useReachBottom(() => {
 
 // 监听页面的滚动
 const { scrollTop } = useScroll()
+// 定义的可响应式数据, 依赖另外一个可响应式的数据, 那么可以使用计算函数(computed)
 const showSearchBar = computed(() => {
   return scrollTop.value >= 350
 })
-
+// 跳转回home时, 保留原来的位置
 onActivated(() => {
   window.scrollTo({
     top: scrollTop.value
